@@ -218,8 +218,7 @@ tb_qlf_SPIP_SP_vol <- tb_qlf_SPIP_SP %>%
 ######
 
 ### Figure 1
-# 1A - Study design
-# 1B- Testis weight 
+# 1C- Testis weight 
 
 plot_testis2<- df_phys2 %>%
   mutate(Group= fct_relevel(Group,"LP", "LPIP", "SPIP", "SP")) %>% 
@@ -243,10 +242,7 @@ plot_testis2<- df_phys2 %>%
 plot_testis2
 
 
-# 1C- Z-score body weight
-Created in Graphpad prism 8
-
-# 1F - Average CPM per cluster
+# 1G - Average CPM per cluster
 
 plot_all_cpm_clust_abs <- ggerrorplot(data= df_tot_cpm_clust_pres_abs ,
                                       x= "Clustervis",
@@ -283,8 +279,7 @@ eds3 <- plot_all_cpm_clust_abs_ed2+
 
 ggsave("output/Fig1_All_tot_cpm_default_linethick_221010.pdf", plot=eds3, dpi=300, width = 28, height = 14, units=c("cm") )
 
-# 1G- barchart 
-Created in graphpad prism 8
+
 
 # 2A - PCA analysis
 
@@ -382,61 +377,9 @@ Up_LP_GO %>%
   ylab('') +
   theme(axis.ticks = element_blank()) 
   
-# 2D - Dot plot of expression for cilia genes
 
-gene_cilia <- read_csv("cilia-final.csv")
-gene_cilia %>% sample_n(5)
-markers <- gene_cilia$Gene %>% unique()
-gene_cilia %>% filter(Gene %in% markers) %>%
-  ggplot(aes(x=group, y= Gene, color = log2counts, size = normcounts))+
-  geom_point()+
-  scale_color_gradientn(colours = viridis::viridis(20), limits = c(0,10), oob = scales::squish, name = 'log2count')+
-  scale_size(range = c(-1,5))+
-  cowplot::theme_cowplot() +
-  theme(axis.line  = element_blank()) +
-  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) +
-  ylab('') +
-  theme(axis.ticks = element_blank())
 
-# 3A - Barchart 
-
-# 3B - Barchart 
-
-# 3C - Lollipop plot enriched SP
-Up_SP_GO <- read.csv("up_SP_go-fdr0.01-manual-reduncancy.csv", header =TRUE)
-Up_SP_GO %>% sample_n(5)
-Up_SP_GO %>%
-  ggplot(aes(x= Generatio, y= reorder(Description, Generatio),  size =Enrichment, colour = log10FDR ))+
-  geom_point()+
-  scale_color_gradientn(colours = viridis::viridis(20), limits = c(2,10), oob = scales::squish, name = '-Log10FDR')+
-  scale_size(limits = c(1,6), range = c(1,10))+
-  theme_bw()+
-  theme(axis.line  = element_blank()) +
-  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) +
-  ylab('') +
-  theme(axis.ticks = element_blank()) 
-
-# 3D - dotplot Ascl1 
-
-plot_Ascl1 <- tb_cpm_long_gr %>% 
-  filter(SYMBOL == "Ascl1") %>% 
-  ggdotplot(x= "Group",
-            y= "Cpm",
-            color= "black",
-            add= "mean_ci",
-            combine= FALSE,
-            merge= FALSE)+
-  ylim(0,40)
-
-plot_Ascl1
-
-ggsave("output/Ascl1_BW_TMM_cpm_20221017.pdf", plot_Ascl1, dpi=300)
-
-# 3E - Done in graphpad prism 8
-
-# 3F - Barchart Done in graphpad prism 8
-
-# 4A - Volcano plot SPIP vs SP
+# 3A - Volcano plot SPIP vs SP
 
 keyvals.color3 <- ifelse(
   tb_qlf_SP_SPIP_vol$logFC< 0 & tb_qlf_SP_SPIP_vol$FDR < 0.001 , 'darkgreen',
@@ -485,7 +428,7 @@ SP_SPIP_vol_2 <-EnhancedVolcano(tb_qlf_SP_SPIP_vol,
 ggsave("output/Volcano_SP_SPIP.pdf", plot=SP_SPIP_vol_2, dpi = 300, height = 7, width = 7)
 
 
-# 4A - Volcano plot LPIP vs LP
+# 3A - Volcano plot LPIP vs LP
 
 keyvals.color <- ifelse(
   tb_qlf_LP_LPIP_vol$logFC< 0 & tb_qlf_LP_LPIP_vol$FDR < 0.001 , 'dodgerblue3',
@@ -540,11 +483,7 @@ LP_LPIP_vol <-EnhancedVolcano(tb_qlf_LP_LPIP_vol,
 ggsave("output/Volcano_LP_LPIP.pdf", plot= LP_LPIP_vol, dpi = 300, height = 7, width = 7)
 
 
-# 4C - done in Graphpad prism 8
-
-# 4D - Venndiagram done in inkscape
-
-# 4E - heatmap SPIP uDEG
+# 4B - heatmap SPIP uDEG
 
 SPIP_transition <- read_delim("109-SPIP-transistion-genes-for-heatmap.txt")
 
@@ -582,19 +521,3 @@ hm_transition_symb <- Heatmap( mt_SPIP_trans_rowscale,
 pdf(file="output/heatmap_SPIP_transition_genes_symbols_ind_cpm_221013.pdf", width = 14, height=21)
 draw( hm_transition_symb )
 dev.off()
-
-# 4F - enriched TFBS
-TFBS_odds <- read.csv("TFBS-odds-all.csv", header =TRUE)
-TFBS_odds %>% sample_n(5)
-TFBS_odds %>%
-  ggplot(aes(x= odds.ratio, y= reorder(motif.name, odds.ratio), fill = log10fdr))+
-  geom_col()+
-  scale_fill_gradientn(colours = viridis::viridis(20), limits = c(1.36,2.5), oob = scales::squish, name = '-Log10FDR')+
-  scale_x_continuous(limits = c(-15, 15))+
-  cowplot::theme_cowplot() +
-  theme_bw()+
-  theme(axis.line  = element_blank()) +
-  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) +
-  ylab('') +
-  theme(axis.ticks = element_blank()) 
-
